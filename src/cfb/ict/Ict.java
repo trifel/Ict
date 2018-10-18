@@ -19,6 +19,23 @@ public class Ict {
             properties = new Properties();
         }
 
-        Utils.log("Ict " + VERSION + " is shut down.");
+        final Node node = new Node(properties);
+
+        node.run();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+
+            try {
+
+                node.stop();
+
+                Utils.log("Ict " + VERSION + " is shut down.");
+
+            } catch (final Exception e) {
+
+                e.printStackTrace();
+            }
+
+        }, "Shutdown Hook"));
     }
 }
