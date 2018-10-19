@@ -1,2 +1,2 @@
 # Ict
-IOTA Controlled agenT
+Iota Controlled agenT
