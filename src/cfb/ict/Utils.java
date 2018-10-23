@@ -7,10 +7,71 @@ import java.util.Date;
 
 public class Utils {
 
+    private static final String TRYTES = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final byte[][] TRYTES_TRITS = new byte[][] {
+
+            {0, 0, 0},
+            {1, 0, 0},
+            {-1, 1, 0},
+            {0, 1, 0},
+            {1, 1, 0},
+            {-1, -1, 1},
+            {0, -1, 1},
+            {1, -1, 1},
+            {-1, 0, 1},
+            {0, 0, 1},
+            {1, 0, 1},
+            {-1, 1, 1},
+            {0, 1, 1},
+            {1, 1, 1},
+            {-1, -1, -1},
+            {0, -1, -1},
+            {1, -1, -1},
+            {-1, 0, -1},
+            {0, 0, -1},
+            {1, 0, -1},
+            {-1, 1, -1},
+            {0, 1, -1},
+            {1, 1, -1},
+            {-1, -1, 0},
+            {0, -1, 0},
+            {1, -1, 0},
+            {-1, 0, 0}
+    };
+
     static void log(final String message) {
 
         System.out.println((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")).format(new Date(System.currentTimeMillis()))
                 + ": " + message);
+    }
+
+    static String trytes(final byte[] trits, final int offset, final int length) { // length must be a multiple of 3
+
+        final StringBuilder trytes = new StringBuilder();
+
+        for (int i = 0; i < length / 3; i++) {
+
+            int j = trits[offset + i * 3] + trits[offset + i * 3 + 1] * 3 + trits[offset + i * 3 + 2] * 9;
+            if (j < 0) {
+
+                j += TRYTES.length();
+            }
+            trytes.append(TRYTES.charAt(j));
+        }
+
+        return trytes.toString();
+    }
+
+    static byte[] trits(final String trytes) {
+
+        final byte[] trits = new byte[trytes.length() * 3];
+
+        for (int i = 0; i < trytes.length(); i++) {
+
+            System.arraycopy(TRYTES_TRITS[TRYTES.indexOf(trytes.charAt(i))], 0, trits, i * 3, 3);
+        }
+
+        return trits;
     }
 
     static void convertTritsToBytes(final byte[] trits, int tritsOffset, int tritsLength, // tritsLength must be a multiple of 9
