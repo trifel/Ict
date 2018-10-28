@@ -1,5 +1,6 @@
 package cfb.ict;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
@@ -74,49 +75,16 @@ public class Utils {
         return trits;
     }
 
-    static void convertTritsToBytesTrinary(final byte[] trits, int tritsOffset, int tritsLength, // tritsLength must be a multiple of 6
+    static void convertTritsToBytesTrinary(final byte[] trits, int tritsOffset, int tritsLength, // tritsLength must be a multiple of 81
                                            final byte[] bytes, final int bytesOffset) {
 
-        final ByteBuffer bytesBuffer = (ByteBuffer) ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).position(bytesOffset);
-
-        do {
-
-            int value = 0;
-
-            for (int i = 6; i-- > 0; ) {
-
-                value = value * 3 + trits[tritsOffset + i];
-            }
-            tritsOffset += 6;
-
-            bytesBuffer.put((byte) value);
-
-        } while ((tritsLength -= 6) > 0);
+        // TODO: Implement 16-bytes-fit-81-trits encoding
     }
 
-    static void convertBytesToTritsTrinary(final byte[] bytes, final int bytesOffset, int bytesLength,
+    static void convertBytesToTritsTrinary(final byte[] bytes, final int bytesOffset, int bytesLength, // bytesLength must be a multiple of 16
                                            final byte[] trits, int tritsOffset) {
 
-        final ByteBuffer bytesBuffer = (ByteBuffer) ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).position(bytesOffset);
-
-        do {
-
-            final int value = bytesBuffer.get();
-
-            int absoluteValue = value < 0 ? -value : value;
-            for (int i = 0; i < 6; i++) {
-
-                int remainder = absoluteValue % 3;
-                absoluteValue /= 3;
-                if (remainder > 1) {
-
-                    remainder = -1;
-                    absoluteValue++;
-                }
-                trits[tritsOffset++] = (byte) (value < 0 ? -remainder : remainder);
-            }
-
-        } while (--bytesLength > 0);
+        // TODO: Implement 16-bytes-fit-81-trits encoding
     }
 
     static void convertTritsToBytesBinary(final byte[] trits, int tritsOffset, int tritsLength, // tritsLength must be a multiple of 9
@@ -162,5 +130,40 @@ public class Utils {
             }
 
         } while ((bytesLength -= 2) > 0);
+    }
+
+    static BigInteger value(final byte[] trits, final int offset, final int length) {
+
+        BigInteger value = BigInteger.ZERO;
+
+        for (int i = length; i-- > 0; ) {
+
+            value = value.multiply(BigInteger.valueOf(3)).add(BigInteger.valueOf(trits[offset + i]));
+        }
+
+        return value;
+    }
+
+    static byte[] trits(final BigInteger value, final int length) {
+
+        final byte[] trits = new byte[length];
+
+        BigInteger absoluteValue = value.abs();
+        for (int i = 0; i < length; i++) {
+
+            final BigInteger[] quotientAndRemainder = absoluteValue.divideAndRemainder(BigInteger.valueOf(3));
+            if (quotientAndRemainder[1].compareTo(BigInteger.ONE) > 0) {
+
+                trits[i] = (byte) (value.signum() < 0 ? 1 : -1);
+                absoluteValue = quotientAndRemainder[0].add(BigInteger.ONE);
+
+            } else {
+
+                trits[i] = (byte) (value.signum() < 0 ? -quotientAndRemainder[1].byteValueExact() : quotientAndRemainder[1].byteValueExact());
+                absoluteValue = quotientAndRemainder[0];
+            }
+        }
+
+        return trits;
     }
 }
