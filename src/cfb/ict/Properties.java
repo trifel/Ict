@@ -11,6 +11,9 @@ public class Properties {
 
     long timestampLowerBoundDelta = 90, timestampUpperBoundDelta = 90; // In seconds
 
+    String neighborAHost, neighborBHost, neighborCHost;
+    int neighborAPort, neighborBPort, neighborCPort;
+
     Properties() {
     }
 
@@ -35,5 +38,12 @@ public class Properties {
 
         timestampLowerBoundDelta = Long.parseLong(properties.getProperty("timestampLowerBoundDelta", Long.valueOf(timestampLowerBoundDelta).toString()));
         timestampUpperBoundDelta = Long.parseLong(properties.getProperty("timestampUpperBoundDelta", Long.valueOf(timestampUpperBoundDelta).toString()));
+
+        neighborAHost = properties.getProperty("neighborAHost");
+        neighborAPort = Integer.parseInt(properties.getProperty("neighborAPort"));
+        neighborBHost = properties.getProperty("neighborBHost");
+        neighborBPort = Integer.parseInt(properties.getProperty("neighborBPort"));
+        neighborCHost = properties.getProperty("neighborCHost");
+        neighborCPort = Integer.parseInt(properties.getProperty("neighborCPort"));
     }
 }

@@ -19,7 +19,7 @@ public class Ict {
             properties = new Properties();
         }
 
-        final Node node = new Node(properties);
+        final Node node = new Node(properties, new Tangle());
 
         node.run();
 

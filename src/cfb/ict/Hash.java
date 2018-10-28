@@ -8,7 +8,7 @@ public class Hash {
 
     final byte[] trits;
 
-    private int hashCode;
+    private final int hashCode;
 
     Hash(final byte[] trits, final int offset) {
 

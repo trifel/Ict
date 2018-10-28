@@ -37,12 +37,12 @@ public class Curl { // TODO: Replace with a cryptographic hash function
         } while ((length -= HASH_LENGTH) > 0);
     }
 
-    void getInnerState(final byte[] trits, int offset) {
+    void getInnerState(final byte[] trits, final int offset) {
 
         System.arraycopy(state, HASH_LENGTH, trits, offset, (STATE_LENGTH - HASH_LENGTH));
     }
 
-    void setInnerState(final byte[] trits, int offset) {
+    void setInnerState(final byte[] trits, final int offset) {
 
         System.arraycopy(trits, offset, state, HASH_LENGTH, (STATE_LENGTH - HASH_LENGTH));
     }
