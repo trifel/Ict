@@ -32,4 +32,9 @@ public class Neighbor {
         numberOfNewTransactions = 0;
         numberOfInvalidTransactions = 0;
     }
+
+    void send(final Transaction transaction) {
+
+        // TODO: Implement
+    }
 }
