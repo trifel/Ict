@@ -132,6 +132,16 @@ public class Utils {
         } while ((bytesLength -= 2) > 0);
     }
 
+    static int sizeInBytesBinary(final int lengthInTrits) { // lengthInTrits must be a multiple of 9
+
+        return (lengthInTrits / 9) * 2;
+    }
+
+    static int lengthInTritsBinary(final int sizeInBytes) { // sizeInBytes must be a multiple of 2
+
+        return (sizeInBytes / 2) * 9;
+    }
+
     static BigInteger value(final byte[] trits, final int offset, final int length) {
 
         BigInteger value = BigInteger.ZERO;

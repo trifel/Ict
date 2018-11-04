@@ -62,6 +62,9 @@ public class Node {
 
             try {
 
+                final DatagramPacket packet = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+                final byte[] packetTrits = new byte[(PACKET_SIZE / 2) * 9];
+
                 while (phase == RUNNING) {
 
                     final Envelope envelope = envelopes.take();
@@ -76,11 +79,33 @@ public class Node {
                         final Set<Neighbor> senders = tangle.senders(envelope.transaction);
                         if (senders.size() < 2) {
 
+                            envelope.transaction.dump(packetTrits, 0);
+
+                            int firstNonZeroTritOffset;
+                            for (firstNonZeroTritOffset = 0; firstNonZeroTritOffset < Transaction.LENGTH; firstNonZeroTritOffset++) {
+
+                                if (packetTrits[firstNonZeroTritOffset] != 0) {
+
+                                    break;
+                                }
+                            }
+                            final int numberOfSkippedTrits = (firstNonZeroTritOffset / Hash.LENGTH) * Hash.LENGTH;
+                            System.arraycopy(packetTrits, numberOfSkippedTrits, packetTrits, 0, Transaction.LENGTH - numberOfSkippedTrits);
+
+                            for (int i = 0; i < Hash.LENGTH; i++) {
+
+                                packetTrits[(Transaction.LENGTH - numberOfSkippedTrits) + i] = 0; // TODO: Replace with the hash of a requested transaction
+                            }
+
+                            Utils.convertTritsToBytesBinary(packetTrits, 0, (Transaction.LENGTH - numberOfSkippedTrits) + Hash.LENGTH,
+                                    packet.getData(), packet.getOffset());
+                            packet.setLength(Utils.sizeInBytesBinary((Transaction.LENGTH - numberOfSkippedTrits) + Hash.LENGTH));
+
                             for (final Neighbor neighbor : neighbors) {
 
                                 if (!senders.contains(neighbor)) {
 
-                                    neighbor.send(envelope.transaction);
+                                    neighbor.send(socket, packet);
                                 }
                             }
                         }
@@ -124,7 +149,7 @@ public class Node {
                             if (packet.getLength() % ((Hash.LENGTH / 9) * 2) == 0) { // The packet length must be a multiple of 243
 
                                 int offset;
-                                for (offset = 0; offset < (Transaction.LENGTH + Hash.LENGTH) - (packet.getLength() / 2) * 9; offset++) {
+                                for (offset = 0; offset < (Transaction.LENGTH + Hash.LENGTH) - Utils.lengthInTritsBinary(packet.getLength()); offset++) {
 
                                     packetTrits[offset] = 0;
                                 }

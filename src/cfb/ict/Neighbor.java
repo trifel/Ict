@@ -1,5 +1,7 @@
 package cfb.ict;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
 public class Neighbor {
@@ -33,8 +35,16 @@ public class Neighbor {
         numberOfInvalidTransactions = 0;
     }
 
-    void send(final Transaction transaction) {
+    void send(final DatagramSocket socket, final DatagramPacket packet) {
 
-        // TODO: Implement
+        try {
+
+            packet.setSocketAddress(address);
+            socket.send(packet);
+
+        } catch (final Exception e) {
+
+            e.printStackTrace();
+        }
     }
 }
