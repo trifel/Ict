@@ -68,7 +68,7 @@ public class Node {
                 while (phase == RUNNING) {
 
                     final Envelope envelope = envelopes.take();
-                    if (System.currentTimeMillis() > envelope.time) {
+                    if (System.currentTimeMillis() < envelope.time) {
 
                         envelopes.put(envelope);
 
