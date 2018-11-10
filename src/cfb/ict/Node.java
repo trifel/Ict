@@ -146,6 +146,8 @@ public class Node {
 
                         if (packet.getSocketAddress().equals(neighbor.address)) {
 
+                            neighbor.numberOfAllTransactions++;
+
                             if (packet.getLength() % ((Hash.LENGTH / 9) * 2) == 0) { // The packet length must be a multiple of 243
 
                                 int offset;
@@ -160,6 +162,8 @@ public class Node {
                                     final Transaction transaction = new Transaction(packetTrits);
                                     if (tangle.store(transaction, neighbor)) {
 
+                                        neighbor.numberOfNewTransactions++;
+
                                         envelopes.put(new Envelope(System.currentTimeMillis() + properties.minEchoDelay + ThreadLocalRandom.current().nextLong(properties.maxEchoDelay - properties.minEchoDelay),
                                                 transaction));
                                     }
@@ -168,6 +172,10 @@ public class Node {
 
                                     neighbor.numberOfInvalidTransactions++;
                                 }
+
+                            } else {
+
+                                neighbor.numberOfInvalidTransactions++;
                             }
 
                             break;
