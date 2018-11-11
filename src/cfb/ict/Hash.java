@@ -5,6 +5,7 @@ import java.util.Arrays;
 public class Hash {
 
     static final int LENGTH = 243;
+    static final Hash NULL = new Hash(new byte[LENGTH], 0);
 
     final byte[] trits;
 

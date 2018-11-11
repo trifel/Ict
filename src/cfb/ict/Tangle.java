@@ -9,12 +9,32 @@ public class Tangle {
 
     final Map<Hash, Vertex> vertices = new ConcurrentHashMap<>();
 
+    Tangle() {
+
+        final Vertex vertex = new Vertex();
+        vertex.transaction = Transaction.NULL;
+        vertices.put(Hash.NULL, vertex);
+    }
+
     boolean store(final Transaction transaction, final Neighbor sender) {
 
-        final Vertex vertex = vertices.get(transaction.hash);
-        if (vertex == null) {
+        final Vertex vertex = vertices.computeIfAbsent(transaction.hash, k -> new Vertex());
+        if (vertex.transaction == null) {
 
-            vertices.put(transaction.hash, new Vertex(transaction, sender));
+            vertex.transaction = transaction;
+
+            vertex.trunkVertex = vertices.computeIfAbsent(transaction.trunkTransactionHash, k -> new Vertex());
+            vertex.trunkVertex.referrers.add(vertex);
+
+            if (transaction.branchTransactionHash.equals(transaction.trunkTransactionHash)) {
+
+                vertex.branchVertex = vertex.trunkVertex;
+
+            } else {
+
+                vertex.branchVertex = vertices.computeIfAbsent(transaction.branchTransactionHash, k -> new Vertex());
+                vertex.branchVertex.referrers.add(vertex);
+            }
 
             return true;
 
@@ -35,23 +55,17 @@ public class Tangle {
 
     static class Vertex {
 
-        final Transaction transaction;
-        final Set<Neighbor> senders;
+        Transaction transaction;
+        Vertex trunkVertex, branchVertex;
+        final Set<Vertex> referrers = ConcurrentHashMap.newKeySet();
+        final Set<Neighbor> senders = ConcurrentHashMap.newKeySet();
 
-        Vertex(final Transaction transaction, final Neighbor sender) {
+        void addSender(final Neighbor sender) {
 
-            this.transaction = transaction;
-
-            senders = ConcurrentHashMap.newKeySet();
             if (sender != null) {
 
                 senders.add(sender);
             }
-        }
-
-        void addSender(final Neighbor sender) {
-
-            senders.add(sender);
         }
 
         Set<Neighbor> senders() {

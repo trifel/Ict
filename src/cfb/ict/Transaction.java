@@ -24,6 +24,8 @@ public class Transaction {
     static final int LENGTH = TRANSACTION_NONCE_OFFSET + TRANSACTION_NONCE_LENGTH;
     static final int BUNDLE_ESSENCE_OFFSET = EXTRA_DATA_DIGEST_OFFSET, BUNDLE_ESSENCE_LENGTH = EXTRA_DATA_DIGEST_LENGTH + ADDRESS_LENGTH + VALUE_LENGTH + ISSUANCE_TIMESTAMP_LENGTH + TIMELOCK_LOWER_BOUND_LENGTH + TIMELOCK_UPPER_BOUND_LENGTH + BUNDLE_NONCE_LENGTH;
 
+    static final Transaction NULL = new Transaction(new byte[LENGTH]);
+
     final byte[] signatureOrMessage;
     final Hash extraDataDigest;
     final Hash address;

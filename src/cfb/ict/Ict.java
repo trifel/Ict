@@ -2,7 +2,7 @@ package cfb.ict;
 
 public class Ict {
 
-    static final String VERSION = "0.2.0";
+    static final String VERSION = "0.3.0";
 
     static Properties properties;
 
