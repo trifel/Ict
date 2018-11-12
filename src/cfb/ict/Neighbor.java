@@ -2,11 +2,13 @@ package cfb.ict;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 public class Neighbor {
 
-    final InetSocketAddress address;
+    InetSocketAddress address;
 
     int numberOfAllTransactions, prevNumberOfAllTransactions;
     int numberOfNewTransactions, prevNumberOfNewTransactions;
@@ -25,6 +27,15 @@ public class Neighbor {
     }
 
     void beginNewRound() {
+
+        try {
+            // Replace InetSocketAddress if resolved address is different from previous round
+            if (!address.getAddress ().equals (InetAddress.getByName (address.getHostName ()))) {
+                address = new InetSocketAddress(address.getHostName (), address.getPort ());
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace ();
+        }
 
         prevNumberOfAllTransactions = numberOfAllTransactions;
         prevNumberOfNewTransactions = numberOfNewTransactions;
