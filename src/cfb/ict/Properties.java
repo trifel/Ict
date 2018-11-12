@@ -30,20 +30,20 @@ public class Properties {
             throw new RuntimeException(e);
         }
 
-        host = properties.getProperty("host", host);
-        port = Integer.parseInt(properties.getProperty("port", Integer.valueOf(port).toString()));
-        roundDuration = Integer.parseInt(properties.getProperty("roundDuration", Integer.valueOf(roundDuration).toString()));
-        minEchoDelay = Integer.parseInt(properties.getProperty("minEchoDelay", Integer.valueOf(minEchoDelay).toString()));
-        maxEchoDelay = Integer.parseInt(properties.getProperty("maxEchoDelay", Integer.valueOf(maxEchoDelay).toString()));
+        host = properties.getProperty("host", host).trim ();
+        port = Integer.parseInt(properties.getProperty("port", Integer.valueOf(port).toString()).trim ());
+        roundDuration = Integer.parseInt(properties.getProperty("roundDuration", Integer.valueOf(roundDuration).toString()).trim ());
+        minEchoDelay = Integer.parseInt(properties.getProperty("minEchoDelay", Integer.valueOf(minEchoDelay).toString()).trim ());
+        maxEchoDelay = Integer.parseInt(properties.getProperty("maxEchoDelay", Integer.valueOf(maxEchoDelay).toString()).trim ());
 
-        timestampLowerBoundDelta = Long.parseLong(properties.getProperty("timestampLowerBoundDelta", Long.valueOf(timestampLowerBoundDelta).toString()));
-        timestampUpperBoundDelta = Long.parseLong(properties.getProperty("timestampUpperBoundDelta", Long.valueOf(timestampUpperBoundDelta).toString()));
+        timestampLowerBoundDelta = Long.parseLong(properties.getProperty("timestampLowerBoundDelta", Long.valueOf(timestampLowerBoundDelta).toString()).trim ());
+        timestampUpperBoundDelta = Long.parseLong(properties.getProperty("timestampUpperBoundDelta", Long.valueOf(timestampUpperBoundDelta).toString()).trim ());
 
-        neighborAHost = properties.getProperty("neighborAHost");
-        neighborAPort = Integer.parseInt(properties.getProperty("neighborAPort"));
-        neighborBHost = properties.getProperty("neighborBHost");
-        neighborBPort = Integer.parseInt(properties.getProperty("neighborBPort"));
-        neighborCHost = properties.getProperty("neighborCHost");
-        neighborCPort = Integer.parseInt(properties.getProperty("neighborCPort"));
+        neighborAHost = properties.getProperty("neighborAHost").trim ();
+        neighborAPort = Integer.parseInt(properties.getProperty("neighborAPort").trim ());
+        neighborBHost = properties.getProperty("neighborBHost").trim ();
+        neighborBPort = Integer.parseInt(properties.getProperty("neighborBPort").trim ());
+        neighborCHost = properties.getProperty("neighborCHost").trim ();
+        neighborCPort = Integer.parseInt(properties.getProperty("neighborCPort").trim ());
     }
 }
