@@ -34,7 +34,6 @@ Make sure you create and configured the file `ict.properties` before you continu
 You can find an example plugin here: https://github.com/trifel/Report.ixi
 
 ```
-$ mkdir ixi
 $ cd ixi
 $ git clone https://github.com/trifel/Report.ixi.git
 ```
