@@ -29,6 +29,7 @@ public class Ixi {
 
     private static final Logger log = LoggerFactory.getLogger(Ixi.class);
     private static final int MAX_TREE_DEPTH = 2;
+    private static final String IXI_DIRECTORY = "ixi";
 
     private final Gson gson = new GsonBuilder().create();
     private final ScriptEngine scriptEngine = (new ScriptEngineManager()).getEngineByName("JavaScript");
@@ -50,15 +51,13 @@ public class Ixi {
         this.VERSION = VERSION;
     }
 
-    public void init(String rootDir) throws Exception {
-        if(rootDir.length() > 0) {
-            watcher = FileSystems.getDefault().newWatchService();
-            this.rootPath = Paths.get(rootDir);
-            if(this.rootPath.toFile().exists() || this.rootPath.toFile().mkdir()) {
-                registerRecursive(this.rootPath);
-                dirWatchThread = (new Thread(this::processWatchEvents));
-                dirWatchThread.start();
-            }
+    public void init() throws Exception {
+        watcher = FileSystems.getDefault().newWatchService();
+        this.rootPath = Paths.get(IXI_DIRECTORY);
+        if(this.rootPath.toFile().exists() || this.rootPath.toFile().mkdir()) {
+            registerRecursive(this.rootPath);
+            dirWatchThread = (new Thread(this::processWatchEvents));
+            dirWatchThread.start();
         }
     }
 
@@ -69,6 +68,18 @@ public class Ixi {
                 watch(modulePath);
                 if (modulePath != rootPath) {
                     loadModule(modulePath);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
+
+    private void unregisterRecursive(final Path root) throws IOException {
+        Files.walkFileTree(root, EnumSet.allOf(FileVisitOption.class), MAX_TREE_DEPTH, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path modulePath, BasicFileAttributes attrs) throws IOException {
+                if (modulePath != rootPath) {
+                    unloadModule(modulePath);
                 }
                 return FileVisitResult.CONTINUE;
             }
@@ -257,6 +268,7 @@ public class Ixi {
     }
 
     public void shutdown() throws InterruptedException, IOException {
+        unregisterRecursive(this.rootPath);       
         if(dirWatchThread != null) {
             shutdown = true;
             dirWatchThread.join();

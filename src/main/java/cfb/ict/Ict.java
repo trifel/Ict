@@ -25,10 +25,10 @@ public class Ict {
 
         ixi = new Ixi(node, VERSION);
         try {
-            ixi.init("ixi");
-        } catch (Exception e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            ixi.init();
+        } catch (Exception e) {
+            Utils.log("error: could not initialize ixi");
+            e.printStackTrace();
         }
 
         node.run();
