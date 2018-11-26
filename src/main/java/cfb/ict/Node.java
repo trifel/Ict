@@ -20,7 +20,7 @@ public class Node {
     volatile byte phase;
     final Properties properties;
     final Tangle tangle;
-    public final List<Neighbor> neighbors = new ArrayList<>();
+    final List<Neighbor> neighbors = new ArrayList<>();
     DatagramSocket socket;
     final PriorityBlockingQueue<Envelope> envelopes = new PriorityBlockingQueue<>(1, (envelope1, envelope2) -> {
 
@@ -213,6 +213,10 @@ public class Node {
                 }
             }
         }
+    }
+
+    public List<Neighbor> getNeighbors() {
+        return this.neighbors;
     }
 
     static class Envelope {

@@ -58,4 +58,24 @@ public class Neighbor {
             e.printStackTrace();
         }
     }
+
+    public String getHostAddress() {
+        return this.address.getAddress().getHostAddress();
+    }
+
+    public int getPort() {
+        return this.address.getPort();
+    }
+
+    public int getNumberOfNewTransactions() {
+        return this.numberOfNewTransactions;
+    }
+
+    public int getNumberOfAllTransactions() {
+        return this.numberOfAllTransactions;
+    }
+
+    public int getNumberOfInvalidTransactions() {
+        return this.numberOfInvalidTransactions;
+    }
 }
