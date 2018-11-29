@@ -1,5 +1,8 @@
 package cfb.ict;
 
+import cfb.ict.service.CallableRequest;
+import cfb.ict.service.dto.AbstractResponse;
+import cfb.ict.service.dto.ErrorResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.nio.file.SensitivityWatchEventModifier;
@@ -25,14 +28,15 @@ import java.util.regex.Pattern;
 import static com.sun.jmx.mbeanserver.Util.cast;
 import static java.nio.file.StandardWatchEventKinds.*;
 
-public class Ixi {
+public class IXI {
 
-    private static final Logger log = LoggerFactory.getLogger(Ixi.class);
+    private static final Logger log = LoggerFactory.getLogger(IXI.class);
     private static final int MAX_TREE_DEPTH = 2;
     private static final String IXI_DIRECTORY = "ixi";
 
     private final Gson gson = new GsonBuilder().create();
     private final ScriptEngine scriptEngine = (new ScriptEngineManager()).getEngineByName("JavaScript");
+    private final Map<String, Map<String, CallableRequest<AbstractResponse>>> ixiAPI = new HashMap<>();
     private final Map<String, Map<String, Runnable>> ixiLifetime = new HashMap<>();
     private final Map<WatchKey, Path> watchKeys = new HashMap<>();
     private final Map<Path, Long> loadedLastTime = new HashMap<>();
@@ -46,7 +50,7 @@ public class Ixi {
     private final Node node;
     private final String VERSION;
 
-    public Ixi(Node node, String VERSION) {
+    public IXI(Node node, String VERSION) {
         this.node = node;
         this.VERSION = VERSION;
     }
@@ -189,6 +193,23 @@ public class Ixi {
         return modulePath.resolve("package.json");
     }
 
+    public AbstractResponse processCommand(final String command, Map<String, Object> request) {
+        if(command == null || command.isEmpty()) {
+            return ErrorResponse.create("Command can not be null or empty");
+        }
+
+        Pattern pattern = Pattern.compile("^(.*)\\.(.*)$");
+        Matcher matcher = pattern.matcher(command);
+
+        if (matcher.find()) {
+            Map<String, CallableRequest<AbstractResponse>> ixiMap = ixiAPI.get(matcher.group(1));
+            if (ixiMap != null) {
+                return ixiMap.get(matcher.group(2)).call(request);
+            }
+        }
+        return ErrorResponse.create("Command [" + command + "] is unknown");
+    }
+
     private void loadModule(Path modulePath) {
         log.info("Searching: " + modulePath);
         Path packageJsonPath = getPackagePath(modulePath);
@@ -224,6 +245,7 @@ public class Ixi {
         Path realPath = getRealPath(moduleNamePath);
         String moduleName = getModuleName(realPath, false);
         detach(moduleName);
+        ixiAPI.remove(moduleName);
     }
 
     private void attach(Path pathToMain, String moduleName) {
@@ -235,13 +257,16 @@ public class Ixi {
             return;
         }
         log.info("Starting script: " + pathToMain);
+        Map<String, CallableRequest<AbstractResponse>> ixiMap = new HashMap<>();
         Map<String, Runnable> startStop = new HashMap<>();
 
         Bindings bindings = scriptEngine.createBindings();
+        bindings.put("API", ixiMap);
         bindings.put("IXICycle", startStop);
         bindings.put("NODE", node);
         bindings.put("VERSION", VERSION);
 
+        ixiAPI.put(moduleName, ixiMap);
         ixiLifetime.put(moduleName, startStop);
         try {
             scriptEngine.eval(ixiModuleReader, bindings);
@@ -272,6 +297,8 @@ public class Ixi {
         if(dirWatchThread != null) {
             shutdown = true;
             dirWatchThread.join();
+            ixiAPI.keySet().forEach(this::detach);
+            ixiAPI.clear();
             ixiLifetime.clear();
         }
     }

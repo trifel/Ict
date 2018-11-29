@@ -219,6 +219,10 @@ public class Node {
         return this.neighbors;
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
+
     static class Envelope {
 
         final long time;

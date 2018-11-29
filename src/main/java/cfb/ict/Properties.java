@@ -46,4 +46,12 @@ public class Properties {
         neighborCHost = properties.getProperty("neighborCHost").trim ();
         neighborCPort = Integer.parseInt(properties.getProperty("neighborCPort").trim ());
     }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
 }
