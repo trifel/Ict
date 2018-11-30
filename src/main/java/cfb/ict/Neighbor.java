@@ -63,15 +63,15 @@ public class Neighbor {
         return this.address;
     }
 
-    public int getNumberOfNewTransactions() {
-        return this.numberOfNewTransactions;
+    public int getPrevNumberOfNewTransactions() {
+        return this.prevNumberOfNewTransactions;
     }
 
-    public int getNumberOfAllTransactions() {
-        return this.numberOfAllTransactions;
+    public int getPrevNumberOfAllTransactions() {
+        return this.prevNumberOfAllTransactions;
     }
 
-    public int getNumberOfInvalidTransactions() {
-        return this.numberOfInvalidTransactions;
+    public int getPrevNumberOfInvalidTransactions() {
+        return this.prevNumberOfInvalidTransactions;
     }
 }
