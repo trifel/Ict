@@ -59,12 +59,8 @@ public class Neighbor {
         }
     }
 
-    public String getHostAddress() {
-        return this.address.getAddress().getHostAddress();
-    }
-
-    public int getPort() {
-        return this.address.getPort();
+    public InetSocketAddress getAddress() {
+        return this.address;
     }
 
     public int getNumberOfNewTransactions() {
