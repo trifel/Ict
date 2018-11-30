@@ -59,23 +59,19 @@ public class Neighbor {
         }
     }
 
-    public String getHostAddress() {
-        return this.address.getAddress().getHostAddress();
+    public InetSocketAddress getAddress() {
+        return this.address;
     }
 
-    public int getPort() {
-        return this.address.getPort();
+    public int getPrevNumberOfNewTransactions() {
+        return this.prevNumberOfNewTransactions;
     }
 
-    public int getNumberOfNewTransactions() {
-        return this.numberOfNewTransactions;
+    public int getPrevNumberOfAllTransactions() {
+        return this.prevNumberOfAllTransactions;
     }
 
-    public int getNumberOfAllTransactions() {
-        return this.numberOfAllTransactions;
-    }
-
-    public int getNumberOfInvalidTransactions() {
-        return this.numberOfInvalidTransactions;
+    public int getPrevNumberOfInvalidTransactions() {
+        return this.prevNumberOfInvalidTransactions;
     }
 }

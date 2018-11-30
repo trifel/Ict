@@ -1,12 +1,15 @@
 package cfb.ict;
 
+import cfb.ict.service.API;
+
 public class Ict {
 
     static final String VERSION = "0.3.1";
 
     static Properties properties;
 
-    static Ixi ixi;
+    public static API api;
+    static IXI ixi;
 
     public static void main(final String[] args) {
 
@@ -23,8 +26,11 @@ public class Ict {
 
         final Node node = new Node(properties, new Tangle());
 
-        ixi = new Ixi(node, VERSION);
+        ixi = new IXI(node, VERSION);
+        api = new API(node, ixi);
+
         try {
+            api.init();
             ixi.init();
         } catch (Exception e) {
             Utils.log("error: could not initialize ixi");
@@ -38,6 +44,7 @@ public class Ict {
             try {
 
                 ixi.shutdown();
+                api.shutDown();
                 
                 node.stop();
 
