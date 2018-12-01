@@ -160,7 +160,7 @@ public class Node {
                                 try {
 
                                     final Transaction transaction = new Transaction(packetTrits);
-                                    if (tangle.store(transaction, neighbor)) {
+                                    if (tangle.put(transaction, neighbor)) {
 
                                         neighbor.numberOfNewTransactions++;
 
