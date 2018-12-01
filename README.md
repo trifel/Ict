@@ -10,7 +10,7 @@ Ict is being developed for the Internet, not for the Internet-of-Things.
 
 ## Installing
 
-### compile & package
+### Compile & Package
 
 Maven and Java 8 is required.
 
@@ -23,23 +23,56 @@ $ mvn package
 
 This will create a `target` directory in which you will find the executable jar file that you can use.
 
-### configuration
+### Configuration
 
-#### ict.properties
+#### Ict settings
 
-Make sure you create and configured the file `ict.properties` before you continue. Further information how you create the file: https://medium.com/@lambtho/iota-ict-installation-tutorial-c079a1ca3b7d
+Make sure you create and configure the file `ict.properties` before you continue.
 
-#### ixi plugins
+```
+// The host IP address is used to create the UDP socket and to provide the IXI API. 
+// If the IP address is 0.0.0.0, the socket will be bound to the wildcard address, 
+// an IP address chosen by the kernel. Mostly you don't need to change the host IP.
+host = 0.0.0.0
 
-You can find an example plugin here: https://github.com/trifel/Report.ixi
+// Defines on which port your Ict instance is listen. The port is used for the UDP 
+// socket and the IXI API. The local port must be between 0 and 65535 inclusive. 
+// Important: 
+// You need to open the port for UDP and TCP in your router and/or firewall settings.
+port = 14265
+
+// Insert the IP or domain and the port of your neighbor A.
+neighborAHost = ?.?.?.?
+neighborAPort = 14265
+
+// Insert the IP or domain and the port of your neighbor B.
+neighborBHost = ?.?.?.?
+neighborBPort = 14265
+
+// Insert the IP or domain and the port of your neighbor C.
+neighborCHost = ?.?.?.?
+neighborCPort = 14265
+```
+
+#### Port forwarding, firewall settings
+
+Your Ict instance will only operate, if you open or forward the UDP and TCP port (defined 
+in the file `ict.properties`) in your router and/or firewall settings. 
+
+#### Install additional IXI plugins
+
+Copy the IXI plugin to your ICT installation's `ixi`-folder. 
+
+For example you can install the Report.ixi plugin with the following steps:
 
 ```
 $ cd ixi
 $ git clone https://github.com/trifel/Report.ixi.git
 ```
+More information about this IXI plugin: https://github.com/trifel/Report.ixi
 
-## run Ict
+## Run Ict
 
 ```
-$ java -jar target/ict-0.3.1.jar ict.properties
+$ java -jar ict-0.3.1.jar ict.properties
 ```
