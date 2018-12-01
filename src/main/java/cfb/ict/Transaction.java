@@ -34,7 +34,7 @@ public class Transaction {
     final long timelockLowerBound, timelockUpperBound;
     final byte[] bundleNonce;
     final Hash trunkTransactionHash, branchTransactionHash;
-    final byte[] tag;
+    final Hash tag;
     final long attachmentTimestamp, attachmentTimestampLowerBound, attachmentTimestampUpperBound;
     final byte[] transactionNonce;
 
@@ -43,16 +43,16 @@ public class Transaction {
     Transaction(final byte[] trits) {
 
         signatureOrMessage = Arrays.copyOfRange(trits, SIGNATURE_OR_MESSAGE_OFFSET, SIGNATURE_OR_MESSAGE_OFFSET + SIGNATURE_OR_MESSAGE_LENGTH);
-        extraDataDigest = new Hash(trits, EXTRA_DATA_DIGEST_OFFSET);
-        address = new Hash(trits, ADDRESS_OFFSET);
+        extraDataDigest = new Hash(trits, EXTRA_DATA_DIGEST_OFFSET, EXTRA_DATA_DIGEST_LENGTH);
+        address = new Hash(trits, ADDRESS_OFFSET, ADDRESS_LENGTH);
         value = Utils.value(trits, VALUE_OFFSET, VALUE_LENGTH);
         issuanceTimestamp = Utils.value(trits, ISSUANCE_TIMESTAMP_OFFSET, ISSUANCE_TIMESTAMP_LENGTH).longValueExact();
         timelockLowerBound = Utils.value(trits, TIMELOCK_LOWER_BOUND_OFFSET, TIMELOCK_LOWER_BOUND_LENGTH).longValueExact();
         timelockUpperBound = Utils.value(trits, TIMELOCK_UPPER_BOUND_OFFSET, TIMELOCK_UPPER_BOUND_LENGTH).longValueExact();
         bundleNonce = Arrays.copyOfRange(trits, BUNDLE_NONCE_OFFSET, BUNDLE_NONCE_OFFSET + BUNDLE_NONCE_LENGTH);
-        trunkTransactionHash = new Hash(trits, TRUNK_TRANSACTION_HASH_OFFSET);
-        branchTransactionHash = new Hash(trits, BRANCH_TRANSACTION_HASH_OFFSET);
-        tag = Arrays.copyOfRange(trits, TAG_OFFSET, TAG_OFFSET + TAG_LENGTH);
+        trunkTransactionHash = new Hash(trits, TRUNK_TRANSACTION_HASH_OFFSET, TRUNK_TRANSACTION_HASH_LENGTH);
+        branchTransactionHash = new Hash(trits, BRANCH_TRANSACTION_HASH_OFFSET, BRANCH_TRANSACTION_HASH_LENGTH);
+        tag = new Hash(trits, TAG_OFFSET, TAG_LENGTH);
         attachmentTimestamp = Utils.value(trits, ATTACHMENT_TIMESTAMP_OFFSET, ATTACHMENT_TIMESTAMP_LENGTH).longValueExact();
         attachmentTimestampLowerBound = Utils.value(trits, ATTACHMENT_TIMESTAMP_LOWER_BOUND_OFFSET, ATTACHMENT_TIMESTAMP_LOWER_BOUND_LENGTH).longValueExact();
         attachmentTimestampUpperBound = Utils.value(trits, ATTACHMENT_TIMESTAMP_UPPER_BOUND_OFFSET, ATTACHMENT_TIMESTAMP_UPPER_BOUND_LENGTH).longValueExact();
@@ -68,7 +68,7 @@ public class Transaction {
         final Curl curl = new Curl();
         curl.absorb(trits, 0, LENGTH);
         curl.squeeze(hashTrits, 0, hashTrits.length);
-        hash = new Hash(hashTrits, 0);
+        hash = new Hash(hashTrits, 0, hashTrits.length);
     }
 
     void dump(final byte[] trits, final int offset) {
@@ -83,7 +83,7 @@ public class Transaction {
         System.arraycopy(bundleNonce, 0, trits, offset + BUNDLE_NONCE_OFFSET, BUNDLE_NONCE_LENGTH);
         System.arraycopy(trunkTransactionHash.trits, 0, trits, offset + TRUNK_TRANSACTION_HASH_OFFSET, TRUNK_TRANSACTION_HASH_LENGTH);
         System.arraycopy(branchTransactionHash.trits, 0, trits, offset + BRANCH_TRANSACTION_HASH_OFFSET, BRANCH_TRANSACTION_HASH_LENGTH);
-        System.arraycopy(tag, 0, trits, offset + TAG_OFFSET, TAG_LENGTH);
+        System.arraycopy(tag.trits, 0, trits, offset + TAG_OFFSET, TAG_LENGTH);
         System.arraycopy(Utils.trits(BigInteger.valueOf(attachmentTimestamp), ATTACHMENT_TIMESTAMP_LENGTH), 0, trits, offset + ATTACHMENT_TIMESTAMP_OFFSET, ATTACHMENT_TIMESTAMP_LENGTH);
         System.arraycopy(Utils.trits(BigInteger.valueOf(attachmentTimestampLowerBound), ATTACHMENT_TIMESTAMP_LOWER_BOUND_LENGTH), 0, trits, offset + ATTACHMENT_TIMESTAMP_LOWER_BOUND_OFFSET, ATTACHMENT_TIMESTAMP_LOWER_BOUND_LENGTH);
         System.arraycopy(Utils.trits(BigInteger.valueOf(attachmentTimestampUpperBound), ATTACHMENT_TIMESTAMP_UPPER_BOUND_LENGTH), 0, trits, offset + ATTACHMENT_TIMESTAMP_UPPER_BOUND_OFFSET, ATTACHMENT_TIMESTAMP_UPPER_BOUND_LENGTH);

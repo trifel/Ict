@@ -185,7 +185,9 @@ public class Node {
 
             } catch (final Exception e) {
 
-                e.printStackTrace();
+                if (phase == RUNNING) {
+                    e.printStackTrace();
+                }
             }
 
             phase = STOPPED;
