@@ -5,15 +5,16 @@ import java.util.Arrays;
 public class Hash {
 
     static final int LENGTH = 243;
-    static final Hash NULL = new Hash(new byte[LENGTH], 0);
+    static final Hash NULL = new Hash(new byte[LENGTH], 0, LENGTH);
 
     final byte[] trits;
 
     private final int hashCode;
 
-    Hash(final byte[] trits, final int offset) {
+    Hash(final byte[] trits, final int offset, final int length) {
 
-        this.trits = Arrays.copyOfRange(trits, offset, offset + LENGTH);
+        this.trits = new byte[LENGTH];
+        System.arraycopy(trits, offset, this.trits, 0, Math.min(LENGTH, length));
 
         hashCode = Arrays.hashCode(this.trits);
     }
