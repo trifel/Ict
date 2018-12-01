@@ -164,8 +164,7 @@ public class Node {
 
                                         neighbor.numberOfNewTransactions++;
 
-                                        envelopes.put(new Envelope(System.currentTimeMillis() + properties.minEchoDelay + ThreadLocalRandom.current().nextLong(properties.maxEchoDelay - properties.minEchoDelay),
-                                                transaction));
+                                        replicate(transaction);
                                     }
 
                                 } catch (final RuntimeException e) {
@@ -215,6 +214,12 @@ public class Node {
                 }
             }
         }
+    }
+
+    void replicate(final Transaction transaction) {
+
+        envelopes.put(new Envelope(System.currentTimeMillis() + properties.minEchoDelay + ThreadLocalRandom.current().nextLong(properties.maxEchoDelay - properties.minEchoDelay),
+                transaction));
     }
 
     static class Envelope {

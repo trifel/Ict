@@ -26,6 +26,7 @@ public class Tangle {
     boolean put(final Transaction transaction, final Neighbor sender) {
 
         final Vertex vertex = verticesByHash.computeIfAbsent(transaction.hash, k -> new Vertex(transaction.hash));
+        vertex.addSender(sender);
         if (vertex.transaction == null) {
 
             vertex.transaction = transaction;
@@ -54,8 +55,6 @@ public class Tangle {
             return true;
 
         } else {
-
-            vertex.addSender(sender);
 
             return false;
         }
