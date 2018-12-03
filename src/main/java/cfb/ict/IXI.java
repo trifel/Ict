@@ -1,5 +1,7 @@
 package cfb.ict;
 
+import java.util.LinkedList;
+import java.util.List;
 import cfb.ict.service.CallableRequest;
 import cfb.ict.service.dto.AbstractResponse;
 import cfb.ict.service.dto.ErrorResponse;
@@ -48,11 +50,60 @@ public class IXI {
     private boolean shutdown = false;
 
     private final Node node;
-    private final String VERSION;
+    private final Tangle tangle;
 
-    public IXI(Node node, String VERSION) {
+    IXI(final Tangle tangle, final Node node) {
+
+        this.tangle = tangle;
         this.node = node;
-        this.VERSION = VERSION;
+    }
+
+    List<Transaction> getTransactions(final List<Hash> hashes) {
+
+        final List<Transaction> result = new LinkedList<>();
+
+        for (final Hash hash : hashes) {
+
+            final Tangle.Vertex vertex = tangle.get(hash);
+            if (vertex != null && vertex.transaction != null) {
+
+                result.add(vertex.transaction);
+            }
+        }
+
+        return result;
+    }
+
+    List<Hash> putTransactions(final List<Transaction> transactions) {
+
+        final List<Hash> result = new LinkedList<>();
+
+        for (final Transaction transaction : transactions) {
+
+            if (tangle.put(transaction, null)) {
+
+                node.replicate(transaction);
+
+                result.add(transaction.hash);
+            }
+        }
+
+        return result;
+    }
+
+    List<Hash> removeTransactions(final List<Hash> hashes) {
+
+        final List<Hash> result = new LinkedList<>();
+
+        for (final Hash hash : hashes) {
+
+            if (tangle.remove(hash)) {
+
+                result.add(hash);
+            }
+        }
+
+        return result;
     }
 
     public void init() throws Exception {
@@ -263,8 +314,9 @@ public class IXI {
         Bindings bindings = scriptEngine.createBindings();
         bindings.put("API", ixiMap);
         bindings.put("IXICycle", startStop);
+        bindings.put("TANGLE", tangle);
         bindings.put("NODE", node);
-        bindings.put("VERSION", VERSION);
+        bindings.put("VERSION", Ict.VERSION);
 
         ixiAPI.put(moduleName, ixiMap);
         ixiLifetime.put(moduleName, startStop);

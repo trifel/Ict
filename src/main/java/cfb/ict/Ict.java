@@ -4,7 +4,7 @@ import cfb.ict.service.API;
 
 public class Ict {
 
-    static final String VERSION = "0.3.1";
+    static final String VERSION = "0.3.1 (build 1)";
 
     static Properties properties;
 
@@ -26,7 +26,7 @@ public class Ict {
 
         final Node node = new Node(properties, new Tangle());
 
-        ixi = new IXI(node, VERSION);
+        ixi = new IXI(null, node);
         api = new API(node, ixi);
 
         try {

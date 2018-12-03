@@ -18,16 +18,21 @@ public class Tangle {
         verticesByHash.put(Hash.NULL, vertex);
     }
 
-    boolean store(final Transaction transaction, final Neighbor sender) {
+    Vertex get(final Hash hash) {
+
+        return verticesByHash.get(hash);
+    }
+
+    boolean put(final Transaction transaction, final Neighbor sender) {
 
         final Vertex vertex = verticesByHash.computeIfAbsent(transaction.hash, k -> new Vertex(transaction.hash));
+        vertex.addSender(sender);
         if (vertex.transaction == null) {
 
             vertex.transaction = transaction;
 
             vertex.trunkVertex = verticesByHash.computeIfAbsent(transaction.trunkTransactionHash, k -> new Vertex(transaction.trunkTransactionHash));
             vertex.trunkVertex.referrers.add(vertex);
-
             if (transaction.branchTransactionHash.equals(transaction.trunkTransactionHash)) {
 
                 vertex.branchVertex = vertex.trunkVertex;
@@ -51,9 +56,55 @@ public class Tangle {
 
         } else {
 
-            vertex.addSender(sender);
+            return false;
+        }
+    }
+
+    boolean remove(final Hash hash) { // TODO: Rewrite to avoid race conditions
+
+        final Vertex vertex = verticesByHash.get(hash);
+        if (vertex == null || vertex.transaction == null) {
 
             return false;
+
+        } else {
+
+            if (!vertex.transaction.address.equals(Hash.NULL)) {
+
+                final Set<Vertex> vertices = verticesByAddress.get(vertex.transaction.address);
+                vertices.remove(vertex);
+                if (vertices.isEmpty()) {
+
+                    verticesByAddress.remove(vertex.transaction.address);
+                }
+            }
+            if (!vertex.transaction.tag.equals(Hash.NULL)) {
+
+                final Set<Vertex> vertices = verticesByTag.get(vertex.transaction.tag);
+                vertices.remove(vertex);
+                if (vertices.isEmpty()) {
+
+                    verticesByTag.remove(vertex.transaction.tag);
+                }
+            }
+
+            vertex.trunkVertex.referrers.remove(vertex);
+            if (vertex.trunkVertex.referrers.isEmpty() && vertex.trunkVertex.transaction == null) {
+
+                verticesByHash.remove(vertex.trunkVertex.hash);
+            }
+            if (vertex.trunkVertex != vertex.branchVertex) {
+
+                vertex.branchVertex.referrers.remove(vertex);
+                if (vertex.branchVertex.referrers.isEmpty() && vertex.branchVertex.transaction == null) {
+
+                    verticesByHash.remove(vertex.branchVertex.hash);
+                }
+            }
+
+            vertex.transaction = null;
+
+            return true;
         }
     }
 
