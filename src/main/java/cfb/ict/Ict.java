@@ -4,7 +4,7 @@ import cfb.ict.service.API;
 
 public class Ict {
 
-    static final String VERSION = "0.3.1 (build 1)";
+    static final String VERSION = "0.3.0-ixi";
 
     static Properties properties;
 
