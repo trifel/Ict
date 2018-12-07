@@ -4,7 +4,7 @@
     <groupId>cfb.ict</groupId>
     <artifactId>Ict</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.0-ixi</version>
+    <version>0.3.0-ixi-1.0</version>
     <name>Ict</name>
     <url>http://maven.apache.org</url>
     <properties>
