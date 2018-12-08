@@ -15,6 +15,12 @@
         <jacoco.version>0.7.9</jacoco.version>
     </properties>
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.58</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -169,6 +175,9 @@
                                     <urns>
                                         <urn>
                                             org.apache.commons:commons-lang3:3.5:jar:null:compile:6c6c702c89bfff3cd9e80b04d668c5e190d588c6
+                                        </urn>
+                                        <urn>
+                                            org.bouncycastle:bcprov-jdk15on:1.58:jar:null:compile:2c9aa1c4e3372b447ba5daabade4adf2a2264b12
                                         </urn>
                                         <!-- http://repo2.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/ -->
                                         <urn>

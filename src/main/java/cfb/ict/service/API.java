@@ -7,10 +7,18 @@ import cfb.ict.service.dto.AccessLimitedResponse;
 import cfb.ict.service.dto.ErrorResponse;
 import cfb.ict.service.dto.ExceptionResponse;
 import cfb.ict.utils.IotaIOUtils;
+import cfb.ict.utils.MapIdentityManager;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.undertow.Undertow;
+import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.AuthenticationMode;
+import io.undertow.security.handlers.AuthenticationCallHandler;
+import io.undertow.security.handlers.AuthenticationConstraintHandler;
+import io.undertow.security.handlers.AuthenticationMechanismsHandler;
+import io.undertow.security.handlers.SecurityInitialHandler;
+import io.undertow.security.idm.IdentityManager;
 import io.undertow.security.impl.BasicAuthenticationMechanism;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -316,9 +324,7 @@ public class API {
             return toWrap;
         }
 
-        // API open to all hosts
-        return toWrap;
-        /*final Map<String, char[]> users = new HashMap<>(2);
+        final Map<String, char[]> users = new HashMap<>(2);
         users.put(credentials.split(":")[0], credentials.split(":")[1].toCharArray());
 
         IdentityManager identityManager = new MapIdentityManager(users);
@@ -330,7 +336,7 @@ public class API {
         
         handler = new AuthenticationMechanismsHandler(handler, mechanisms);
         handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
-        return handler;*/
+        return handler;
     }
 
     /**
