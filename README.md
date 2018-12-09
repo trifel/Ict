@@ -32,7 +32,7 @@ Make sure you create and configure the file `ict.properties` before you continue
 ```
 // The host IP address is used to create the UDP socket and to provide the IXI API. 
 // If the IP address is 0.0.0.0, the socket will be bound to the wildcard address, 
-// an IP address chosen by the kernel. Mostly you don't need to change the host IP.
+// an IP address chosen by the kernel. Mostly you don`t need to change the host IP.
 host = 0.0.0.0
 
 // Defines on which port your Ict instance is listen. The port is used for the UDP 
@@ -52,6 +52,24 @@ neighborBPort = 14265
 // Insert the IP or domain and the port of your neighbor C.
 neighborCHost = ?.?.?.?
 neighborCPort = 14265
+```
+
+#### Optional API settings
+
+To configure the settings of the API, create the file `api.properties` in your ICT installation's folder.
+
+```
+// User authentication to access the API. <user>:<password>
+remoteAuth = 
+
+// The defined commands are ignored by the API.
+remoteLimitApi =
+
+// Limits the number of characters the body of an API call may hold.
+maxBodyLength = 1000000
+
+// Limits the number of parameters in an API call. 
+maxRequestsList = 1000
 ```
 
 #### Port forwarding, firewall settings
