@@ -79,15 +79,7 @@ in the file `ict.properties`) in your router and/or firewall settings.
 
 #### Install additional IXI plugins
 
-Copy the IXI plugin to your ICT installation's `ixi`-folder. 
-
-For example you can install the Report.ixi plugin with the following steps:
-
-```
-$ cd ixi
-$ git clone https://github.com/trifel/Report.ixi.git
-```
-More information about this IXI plugin: https://github.com/trifel/Report.ixi
+Copy the IXI plugin to your ICT installation's `ixi`-folder.
 
 ## Run Ict
 
