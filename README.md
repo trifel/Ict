@@ -80,6 +80,7 @@ in the file `ict.properties`) in your router and/or firewall settings.
 #### Install additional IXI plugins
 
 Copy the IXI plugin to your ICT installation's `ixi`-folder.
+Don't forget to consult the configuration documentation of the IXI plugin you are installing.
 
 ## Run Ict
 
