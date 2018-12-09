@@ -74,5 +74,5 @@ More information about this IXI plugin: https://github.com/trifel/Report.ixi
 ## Run Ict
 
 ```
-$ java -jar ict-0.3.0-ixi-1.0.jar ict.properties
+$ java -jar ict-0.3.0-ixi-1.1.jar ict.properties
 ```
