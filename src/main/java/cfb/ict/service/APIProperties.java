@@ -34,7 +34,7 @@ public class APIProperties {
         MAX_REQUESTS_LIST = Integer.parseInt(properties.getProperty("maxRequestsList", "1000").trim ());
         MAX_BODY_LENGTH = Integer.parseInt(properties.getProperty("maxBodyLength", "1000000").trim ());
         REMOTE_LIMIT_API = Collections.unmodifiableList(Arrays.asList(properties.getProperty("remoteLimitApi", "").trim ().split(",")));
-        REMOTE_AUTH = properties.getProperty("remoteAuth", "0.0.0.0").trim ();
+        REMOTE_AUTH = properties.getProperty("remoteAuth", "").trim ();
 
         log.debug("MAX_REQUESTS_LIST: " + APIProperties.getMaxRequestsList());
         log.debug("MAX_BODY_LENGTH: " + APIProperties.getMaxBodyLength());
