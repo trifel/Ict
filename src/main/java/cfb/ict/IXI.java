@@ -314,7 +314,6 @@ public class IXI {
         Bindings bindings = scriptEngine.createBindings();
         bindings.put("API", ixiMap);
         bindings.put("IXICycle", startStop);
-        bindings.put("TANGLE", tangle);
         bindings.put("NODE", node);
         bindings.put("VERSION", Ict.VERSION);
 

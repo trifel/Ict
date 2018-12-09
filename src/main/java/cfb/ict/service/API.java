@@ -7,10 +7,18 @@ import cfb.ict.service.dto.AccessLimitedResponse;
 import cfb.ict.service.dto.ErrorResponse;
 import cfb.ict.service.dto.ExceptionResponse;
 import cfb.ict.utils.IotaIOUtils;
+import cfb.ict.utils.MapIdentityManager;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.undertow.Undertow;
+import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.AuthenticationMode;
+import io.undertow.security.handlers.AuthenticationCallHandler;
+import io.undertow.security.handlers.AuthenticationConstraintHandler;
+import io.undertow.security.handlers.AuthenticationMechanismsHandler;
+import io.undertow.security.handlers.SecurityInitialHandler;
+import io.undertow.security.idm.IdentityManager;
 import io.undertow.security.impl.BasicAuthenticationMechanism;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -63,14 +71,6 @@ public class API {
     private Node instance;
 
     /**
-     * Avoidance of APIConfig, statically defined configuration
-     */
-    private final static int API_MAX_REQUESTS_LIST = 1_000;
-    private final static int API_MAX_BODY_LENGTH = 1_000_000;
-    private final static List<String> API_REMOTE_LIMIT_API = Collections.unmodifiableList(Arrays.asList(""));
-    private final static String API_REMOTE_AUTH = "0.0.0.0";
-
-    /**
      * Starts loading the IOTA API, parameters do not have to be initialized.
      * 
      * @param instance The data source we interact with during any API call.
@@ -80,8 +80,8 @@ public class API {
     public API(Node instance, IXI ixi) {
         this.instance = instance;
         this.ixi = ixi;
-        maxRequestList = API_MAX_REQUESTS_LIST;
-        maxBodyLength = API_MAX_BODY_LENGTH;
+        maxRequestList = APIProperties.getMaxRequestsList();
+        maxBodyLength = APIProperties.getMaxBodyLength();
     }
 
     /**
@@ -90,8 +90,8 @@ public class API {
      * <ol>
      *    <li>
      *        Builds a secure {@link Undertow} server with the port and host.
-     *        If {@link APIConfig#getRemoteAuth()} is defined, remote authentication is blocked for anyone except
-     *         those defined in {@link APIConfig#getRemoteAuth()} or localhost.
+     *        If {@link APIProperties#getRemoteAuth()} is defined, remote authentication is blocked for anyone except
+     *         those defined in {@link APIProperties#getRemoteAuth()} or localhost.
      *        This is done with {@link BasicAuthenticationMechanism} in a {@link AuthenticationMode#PRO_ACTIVE} mode.
      *        By default, this authentication is disabled.
      *    </li>
@@ -277,7 +277,7 @@ public class API {
 
             // Is this command allowed to be run from this request address? 
             // We check the remote limit API configuration.
-            if (API_REMOTE_LIMIT_API.contains(command) &&
+            if (APIProperties.getRemoteLimitApi().contains(command) &&
                     !sourceAddress.getAddress().isLoopbackAddress()) {
                 return AccessLimitedResponse.create("COMMAND " + command + " is not available on this node");
             }
@@ -312,21 +312,19 @@ public class API {
     /**
      * Sets up the {@link HttpHandler} to have correct security settings.
      * Remote authentication is blocked for anyone except 
-     * those defined in {@link APIConfig#getRemoteAuth()} or localhost.
+     * those defined in {@link APIProperties#getRemoteAuth()} or localhost.
      * This is done with {@link BasicAuthenticationMechanism} in a {@link AuthenticationMode#PRO_ACTIVE} mode.
      * 
      * @param toWrap the path handler used in creating the server.
      * @return The updated handler
      */
     private HttpHandler addSecurity(HttpHandler toWrap) {
-        String credentials = API_REMOTE_AUTH;
+        String credentials = APIProperties.getRemoteAuth();
         if (credentials == null || credentials.isEmpty()) {
             return toWrap;
         }
 
-        // API open to all hosts
-        return toWrap;
-        /*final Map<String, char[]> users = new HashMap<>(2);
+        final Map<String, char[]> users = new HashMap<>(2);
         users.put(credentials.split(":")[0], credentials.split(":")[1].toCharArray());
 
         IdentityManager identityManager = new MapIdentityManager(users);
@@ -338,7 +336,7 @@ public class API {
         
         handler = new AuthenticationMechanismsHandler(handler, mechanisms);
         handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
-        return handler;*/
+        return handler;
     }
 
     /**
