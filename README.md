@@ -1,3 +1,5 @@
+[DEPRECATED] Please use https://github.com/iotaledger/ict.
+
 # Ict
 Iota Controlled agenT
 
